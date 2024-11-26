@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Test Raporu</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #2c3e50;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        table th, table td {
+            padding: 12px 15px;
+            text-align: left;
+        }
+
+        table th {
+            background-color: #34495e;
+            color: #fff;
+        }
+
+        table tbody tr:nth-child(odd) {
+            background-color: #f2f2f2;
+        }
+
+        table tbody tr:nth-child(even) {
+            background-color: #ffffff;
+        }
+
+        .success {
+            color: green;
+            font-weight: bold;
+        }
+
+        .failed {
+            color: red;
+            font-weight: bold;
+        }
+
+        pre {
+            background-color: #eef;
+            padding: 10px;
+            border-radius: 4px;
+            overflow: auto;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+<h1>API Test Raporu</h1>
+
+<!-- Dokümantasyon Bölümü -->
+<div class="section">
+    <h2>Yüklenen Dokümantasyon</h2>
+    {% if doc_data %}
+    <pre>{{ doc_data | tojson(indent=2) }}</pre>
+    {% else %}
+    <p style="color: red;">Dokümantasyon yüklenmedi!</p>
+    {% endif %}
+</div>
+
+<!-- Test Raporu Bölümü -->
+<div class="section">
+    <h2>Test Sonuçları</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Endpoint</th>
+            <th>Yöntem</th>
+            <th>Durum</th>
+            <th>Beklenen Yanıt</th>
+            <th>Gerçek Yanıt</th>
+            <th>Farklılıklar</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for result in report %}
+        <tr>
+            <td>{{ result['endpoint'] }}</td>
+            <td>{{ result['method'] }}</td>
+            <td class="{% if result['status'] == 'Success' %}success{% else %}failed{% endif %}">
+                {{ result['status'] }}
+            </td>
+            <td>
+                <pre>{{ result['expected_response'] | tojson(indent=2) }}</pre>
+            </td>
+            <td>
+                <pre>{{ result['actual_response'] | tojson(indent=2) }}</pre>
+            </td>
+            <td>
+            <td>
+                {% if result['differences'] %}
+                <pre>{{ result['differences'] | tojson(indent=2) }}</pre>
+                {% else %}
+                Tüm Alanlar Uyuşuyor
+                {% endif %}
+            </td>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
